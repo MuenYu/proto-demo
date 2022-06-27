@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package app.pb;
+
+option go_package = "./pb";
+
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginRes {
+  status code = 1;
+  string msg = 2;
+  google.protobuf.Any data = 3;
+}
+
+
+enum status {
+  success = 0;
+  failed = 1;
+}
