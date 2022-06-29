@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/any.proto";
-
 package app.pb;
 
 option go_package = "./pb";
@@ -14,7 +12,6 @@ message LoginReq {
 message LoginRes {
   status code = 1;
   string msg = 2;
-  google.protobuf.Any data = 3;
 }
 
 

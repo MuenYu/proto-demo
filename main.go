@@ -26,23 +26,31 @@ func main() {
 func server() {
 	r := gin.New()
 	r.POST("/login", func(c *gin.Context) {
-		log.Println("server", "request get!")
 		var (
 			loginReq pb.LoginReq
+			loginRes pb.LoginRes
+			status   int
+			bytes    []byte
+			err      error
 		)
-		if err := c.ShouldBindWith(&loginReq, binding.ProtoBuf); err != nil {
-			c.ProtoBuf(http.StatusUnavailableForLegalReasons, &pb.LoginRes{
+		if err = c.ShouldBindWith(&loginReq, binding.ProtoBuf); err != nil {
+			status = http.StatusUnavailableForLegalReasons
+			loginRes = pb.LoginRes{
 				Code: 1,
 				Msg:  err.Error(),
-				Data: nil,
-			})
+			}
 		} else {
-			c.ProtoBuf(http.StatusOK, &pb.LoginRes{
+			status = http.StatusOK
+			loginRes = pb.LoginRes{
 				Code: 0,
 				Msg:  fmt.Sprintf("hello %s, your password is %s", loginReq.Username, loginReq.Password),
-				Data: nil,
-			})
+			}
 		}
+		if bytes, err = proto.Marshal(&loginRes); err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println("bytes", bytes)
+		c.ProtoBuf(status, &loginRes)
 	})
 	r.Run(":8080")
 }
